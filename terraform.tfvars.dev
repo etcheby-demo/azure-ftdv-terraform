@@ -1,0 +1,172 @@
+# ============================================
+# TERRAFORM VARIABLES - DEVELOPMENT ENVIRONMENT
+# ============================================
+# This file contains all variable values for the dev environment
+# Copy to terraform.tfvars and update with actual values
+
+# ============================================
+# SUBSCRIPTION & RESOURCE GROUP
+# ============================================
+
+subscription_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+existing_resource_group_name = ""
+existing_vnet_name           = ""
+
+# ============================================
+# EXISTING NETWORK RESOURCES
+# ============================================
+
+external_subnet_name = ""
+internal_subnet_name = ""
+
+# ============================================
+# PROJECT & ENVIRONMENT
+# ============================================
+
+project_name = ""
+environment  = "dev"
+owner_tag    = "DevOps Team"
+
+# ============================================
+# KEY VAULT CONFIGURATION
+# ============================================
+
+key_vault_resource_group_name = ""
+key_vault_name                = ""
+ssh_public_key_secret_name    = ""
+
+# ============================================
+# TERRAFORM STATE BACKEND
+# ============================================
+
+state_storage_account_name       = ""
+state_storage_resource_group_name = ""
+state_container_name             = "tfstate"
+state_key                        = ""
+
+# ============================================
+# CISCO FTDv VMSS CONFIGURATION
+# ============================================
+
+ftdv_instance_count = 2
+ftdv_vmss_sku       = "Standard_D2s_v3"
+
+# ============================================
+# CISCO FTDv MARKETPLACE IMAGE
+# ============================================
+
+ftdv_image_publisher = "cisco"
+ftdv_image_offer     = "cisco-ftdv"
+ftdv_image_sku       = "ftdv-intro-6.10.1"
+ftdv_image_version   = "latest"
+
+# ============================================
+# STORAGE CONFIGURATION
+# ============================================
+
+os_disk_type = "Premium_LRS"
+
+# ============================================
+# SSH & ADMIN ACCESS
+# ============================================
+
+admin_username = "azureuser"
+
+# ============================================
+# NETWORK SECURITY
+# ============================================
+
+management_source_ip = "*"
+
+allowed_internal_cidrs = [
+  "10.0.0.0/16",  # Management VNet
+  "10.1.0.0/16"   # Application VNet (if peered)
+]
+
+# ============================================
+# INTERNAL LOAD BALANCER CONFIGURATION
+# ============================================
+
+ilb_static_ip                   = "10.0.3.100"
+health_probe_protocol           = "Http"
+health_probe_port               = 80
+health_probe_path               = "/"
+health_probe_interval           = 15
+health_probe_unhealthy_threshold = 3
+ilb_idle_timeout                = 4
+
+# ILB Load Balancing Rules with variable backend ports
+ilb_rules = {
+  http = {
+    protocol           = "Tcp"
+    frontend_port      = 80
+    backend_port       = 80
+    enable_floating_ip = false
+  }
+  https = {
+    protocol           = "Tcp"
+    frontend_port      = 443
+    backend_port       = 443
+    enable_floating_ip = false
+  }
+}
+
+# ============================================
+# EXTERNAL LOAD BALANCER CONFIGURATION (OPTIONAL)
+# ============================================
+
+enable_external_lb = false
+
+external_health_probe_protocol = "Http"
+external_health_probe_port     = 80
+external_health_probe_path     = "/"
+external_lb_idle_timeout       = 4
+
+# External LB Load Balancing Rules
+external_lb_rules = {
+  http = {
+    protocol      = "Tcp"
+    frontend_port = 80
+    backend_port  = 80
+  }
+  https = {
+    protocol      = "Tcp"
+    frontend_port = 443
+    backend_port  = 443
+  }
+}
+
+# ============================================
+# UDR (USER-DEFINED ROUTES) CONFIGURATION
+# ============================================
+
+# External Subnet Routing
+enable_external_default_route        = false
+external_default_route_next_hop_type = "Internet"
+external_default_route_next_hop_ip   = ""
+
+external_custom_routes = {
+  # Example: Route backend traffic through FTDv
+  # "route-to-backend" = {
+  #   name           = "route-to-backend"
+  #   address_prefix = "10.1.0.0/16"
+  #   next_hop_type  = "VirtualAppliance"
+  #   next_hop_ip    = "10.0.3.10"
+  # }
+}
+
+# Internal Subnet Routing
+enable_internal_default_route        = false
+internal_default_route_next_hop_type = "VirtualAppliance"
+internal_default_route_next_hop_ip   = ""
+
+internal_custom_routes = {
+  # Example: Route peered VNet traffic through FTDv for inspection
+  # "route-to-app-vnet" = {
+  #   name           = "route-to-app-vnet"
+  #   address_prefix = "10.1.0.0/16"
+  #   next_hop_type  = "VirtualAppliance"
+  #   next_hop_ip    = "10.0.3.10"
+  # }
+}
