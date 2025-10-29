@@ -1,0 +1,22 @@
+# ============================================
+# TERRAFORM BACKEND CONFIGURATION
+# ============================================
+# This file configures remote state storage in Azure Storage Account
+# Uses Entra ID authentication
+#
+# Usage:
+# terraform init -backend-config=backend-config.hcl
+#
+# Prerequisites:
+# 1. Storage account must exist
+# 2. Blob container must exist
+# 3. Current user/service principal must have Storage Blob Data Contributor role
+# 4. Ensure Azure CLI is authenticated: az login
+#
+# IMPORTANT: DO NOT commit this file with actual values to version control
+
+resource_group_name      = ""
+storage_account_name     = ""
+container_name           = ""
+key                      = ""
+use_azuread_auth         = true
